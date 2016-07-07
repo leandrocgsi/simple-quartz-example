@@ -10,7 +10,7 @@ public class ExecuteTriggers {
     ApplicationContext context;
 
     public void executeCron() throws Exception {
-        context = new ClassPathXmlApplicationContext("classpath:config/myquartz-annoconfig.xml");
+        context = new ClassPathXmlApplicationContext("classpath:config/quartz-annotation-configuration.xml");
         TimeUnit.SECONDS.sleep(8);
     }
 }
