@@ -48,12 +48,10 @@ public class TriggerSchedulerFactoryBean extends SchedulerFactoryBean {
                     for (Method method : methods) {
                         if (method.isAnnotationPresent(Cron.class)) {
                             targetMethod = method.getName();
-                            triggerMethod = (Cron) method
-                                    .getAnnotation(Cron.class);
+                            triggerMethod = (Cron) method.getAnnotation(Cron.class);
                             cronExpression = triggerMethod.cronExpression();
                             // Register timer service class
-                            registerJobs(targetObject, targetMethod, beanName,
-                                    cronExpression);
+                            registerJobs(targetObject, targetMethod, beanName, cronExpression);
                         }
                     }
                 }
@@ -63,27 +61,17 @@ public class TriggerSchedulerFactoryBean extends SchedulerFactoryBean {
         }
     }
 
-    /**
-     * Register timer
-     * 
-     * @param targetObject
-     * @param targetMethod
-     * @param beanName
-     * @param cronExpression
-     * @throws Exception
-     */
-    private void registerJobs(Object targetObject, String targetMethod,
-            String beanName, String cronExpression) throws Exception {
-        // The statement packaging business class
+    private void registerJobs(Object targetObject, String targetMethod, String beanName, String cronExpression) throws Exception {
+        
+    	// The statement packaging business class
         MethodInvokingJobDetailFactoryBean jobDetailFactoryBean = new MethodInvokingJobDetailFactoryBean();
         jobDetailFactoryBean.setTargetObject(targetObject);
         jobDetailFactoryBean.setTargetMethod(targetMethod);
-        jobDetailFactoryBean.setBeanName(beanName + "_" + targetMethod
-                + "_Task");
+        jobDetailFactoryBean.setBeanName(beanName + "_" + targetMethod + "_Task");
         jobDetailFactoryBean.setName(beanName + "_" + targetMethod + "_Task");
         jobDetailFactoryBean.setConcurrent(false);
         jobDetailFactoryBean.afterPropertiesSet();
-        //System.out.println(beanName + "_" + targetMethod+"-----cron=" + cronExpression);
+
         // Access to JobDetail
         JobDetail jobDetail = jobDetailFactoryBean.getObject();
 
@@ -96,12 +84,11 @@ public class TriggerSchedulerFactoryBean extends SchedulerFactoryBean {
         cronTriggerBean.afterPropertiesSet();
 
         CronTrigger trigger = cronTriggerBean.getObject();
-        ;
+
         // The timer is registered to the factroy
         List<Trigger> triggerList = new ArrayList<Trigger>();
         triggerList.add(trigger);
-        Trigger[] triggers = (Trigger[]) triggerList
-                .toArray(new Trigger[triggerList.size()]);
+        Trigger[] triggers = (Trigger[]) triggerList.toArray(new Trigger[triggerList.size()]);
         setTriggers(triggers);
         super.registerJobsAndTriggers();
     }

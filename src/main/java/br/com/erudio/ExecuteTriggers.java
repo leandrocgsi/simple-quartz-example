@@ -11,6 +11,6 @@ public class ExecuteTriggers {
 
     public void executeCron() throws Exception {
         context = new ClassPathXmlApplicationContext("classpath:config/myquartz-annoconfig.xml");
-        TimeUnit.SECONDS.sleep(20);
+        TimeUnit.SECONDS.sleep(8);
     }
 }
