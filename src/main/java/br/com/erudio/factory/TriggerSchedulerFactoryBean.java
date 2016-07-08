@@ -63,34 +63,43 @@ public class TriggerSchedulerFactoryBean extends SchedulerFactoryBean {
 
     private void registerJobs(Object targetObject, String targetMethod, String beanName, String cronExpression) throws Exception {
         
-    	// The statement packaging business class
-        MethodInvokingJobDetailFactoryBean jobDetailFactoryBean = new MethodInvokingJobDetailFactoryBean();
+        MethodInvokingJobDetailFactoryBean jobDetailFactoryBean = packagingBusinessClass(targetObject, targetMethod, beanName);
+
+        // Access to JobDetail
+        JobDetail jobDetail = jobDetailFactoryBean.getObject();
+        CronTriggerFactoryBean cronTriggerBean = cofigureTimer(targetMethod, beanName, cronExpression, jobDetail);
+
+        CronTrigger trigger = cronTriggerBean.getObject();
+        registerJobsAndTriggersOnFactory(trigger);
+    }
+
+	private void registerJobsAndTriggersOnFactory(CronTrigger trigger) throws SchedulerException {
+		List<Trigger> triggerList = new ArrayList<Trigger>();
+        triggerList.add(trigger);
+        Trigger[] triggers = (Trigger[]) triggerList.toArray(new Trigger[triggerList.size()]);
+        setTriggers(triggers);
+        super.registerJobsAndTriggers();
+	}
+
+	private CronTriggerFactoryBean cofigureTimer(String targetMethod, String beanName, String cronExpression, JobDetail jobDetail) {
+		CronTriggerFactoryBean cronTriggerBean = new CronTriggerFactoryBean();
+        cronTriggerBean.setJobDetail(jobDetail);
+        cronTriggerBean.setCronExpression(cronExpression);
+        cronTriggerBean.setName(beanName + "_" + targetMethod + "_Trigger");
+        cronTriggerBean.setBeanName(beanName + "_" + targetMethod + "_Trigger");
+        cronTriggerBean.afterPropertiesSet();
+		return cronTriggerBean;
+	}
+
+	private MethodInvokingJobDetailFactoryBean packagingBusinessClass(Object targetObject, String targetMethod, String beanName) throws ClassNotFoundException, NoSuchMethodException {
+		MethodInvokingJobDetailFactoryBean jobDetailFactoryBean = new MethodInvokingJobDetailFactoryBean();
         jobDetailFactoryBean.setTargetObject(targetObject);
         jobDetailFactoryBean.setTargetMethod(targetMethod);
         jobDetailFactoryBean.setBeanName(beanName + "_" + targetMethod + "_Task");
         jobDetailFactoryBean.setName(beanName + "_" + targetMethod + "_Task");
         jobDetailFactoryBean.setConcurrent(false);
         jobDetailFactoryBean.afterPropertiesSet();
-
-        // Access to JobDetail
-        JobDetail jobDetail = jobDetailFactoryBean.getObject();
-
-        // The statement timer
-        CronTriggerFactoryBean cronTriggerBean = new CronTriggerFactoryBean();
-        cronTriggerBean.setJobDetail(jobDetail);
-        cronTriggerBean.setCronExpression(cronExpression);
-        cronTriggerBean.setName(beanName + "_" + targetMethod + "_Trigger");
-        cronTriggerBean.setBeanName(beanName + "_" + targetMethod + "_Trigger");
-        cronTriggerBean.afterPropertiesSet();
-
-        CronTrigger trigger = cronTriggerBean.getObject();
-
-        // The timer is registered to the factroy
-        List<Trigger> triggerList = new ArrayList<Trigger>();
-        triggerList.add(trigger);
-        Trigger[] triggers = (Trigger[]) triggerList.toArray(new Trigger[triggerList.size()]);
-        setTriggers(triggers);
-        super.registerJobsAndTriggers();
-    }
+		return jobDetailFactoryBean;
+	}
 
 }
