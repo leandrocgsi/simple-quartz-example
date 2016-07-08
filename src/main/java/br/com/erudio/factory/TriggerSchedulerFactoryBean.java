@@ -32,16 +32,19 @@ public class TriggerSchedulerFactoryBean extends SchedulerFactoryBean {
     @Override
     public void registerJobsAndTriggers() throws SchedulerException {
         try {
-            // Get all the bean name
-            String[] beanNames = applicationContext.getBeanNamesForType(Object.class);
-            for (String beanName : beanNames) {
-                Class<?> targetClass = applicationContext.getType(beanName);
-                if (isJobClass(targetClass)) getCronExpressionInTriggerMethods(beanName, targetClass);
-            }
+            processBeans();
         } catch (Exception e) {
             log.error(e);
         }
     }
+
+	private void processBeans() throws Exception {
+		String[] beanNames = applicationContext.getBeanNamesForType(Object.class);
+		for (String beanName : beanNames) {
+		    Class<?> targetClass = applicationContext.getType(beanName);
+		    if (isJobClass(targetClass)) getCronExpressionInTriggerMethods(beanName, targetClass);
+		}
+	}
 
 	private boolean isJobClass(Class<?> targetClass) {
 		return targetClass.isAnnotationPresent(QuartzJob.class);
@@ -73,7 +76,6 @@ public class TriggerSchedulerFactoryBean extends SchedulerFactoryBean {
         
         MethodInvokingJobDetailFactoryBean jobDetailFactoryBean = packagingBusinessClass(targetObject, targetMethod, beanName);
 
-        // Access to JobDetail
         JobDetail jobDetail = jobDetailFactoryBean.getObject();
         CronTriggerFactoryBean cronTriggerBean = cofigureTimer(targetMethod, beanName, cronExpression, jobDetail);
 
@@ -109,5 +111,4 @@ public class TriggerSchedulerFactoryBean extends SchedulerFactoryBean {
         jobDetailFactoryBean.afterPropertiesSet();
 		return jobDetailFactoryBean;
 	}
-
 }
