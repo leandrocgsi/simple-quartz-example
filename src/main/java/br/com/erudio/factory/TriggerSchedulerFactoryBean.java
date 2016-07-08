@@ -38,19 +38,21 @@ public class TriggerSchedulerFactoryBean extends SchedulerFactoryBean {
                 Class<?> targetClass = applicationContext.getType(beanName);
                 // To determine whether marked with the MyTriggerType annotation cycle
                 if (targetClass.isAnnotationPresent(QuartzJob.class)) {
-                    Object targetObject = applicationContext.getBean(beanName);
-                    // Gets the time expression
-                    // Determine the marker method of the MyTriggerMethod annotation name
-                    Method[] methods = targetClass.getDeclaredMethods();
-                    for (Method method : methods) {
-                        if (isCronMethod(method)) registerTimerServiceClass(beanName, targetObject, method);
-                    }
+                    getCronExpressionInTriggerMethods(beanName, targetClass);
                 }
             }
         } catch (Exception e) {
             log.error(e);
         }
     }
+
+	private void getCronExpressionInTriggerMethods(String beanName, Class<?> targetClass) throws Exception {
+		Object targetObject = applicationContext.getBean(beanName);
+		Method[] methods = targetClass.getDeclaredMethods();
+		for (Method method : methods) {
+		    if (isCronMethod(method)) registerTimerServiceClass(beanName, targetObject, method);
+		}
+	}
 
 	private void registerTimerServiceClass(String beanName, Object targetObject, Method method) throws Exception {
 		String cronExpression = "";
