@@ -40,19 +40,10 @@ public class TriggerSchedulerFactoryBean extends SchedulerFactoryBean {
                 if (targetClass.isAnnotationPresent(QuartzJob.class)) {
                     Object targetObject = applicationContext.getBean(beanName);
                     // Gets the time expression
-                    String cronExpression = "";
-                    String targetMethod = "";
-                    Cron triggerMethod = null;
                     // Determine the marker method of the MyTriggerMethod annotation name
                     Method[] methods = targetClass.getDeclaredMethods();
                     for (Method method : methods) {
-                        if (method.isAnnotationPresent(Cron.class)) {
-                            targetMethod = method.getName();
-                            triggerMethod = (Cron) method.getAnnotation(Cron.class);
-                            cronExpression = triggerMethod.cronExpression();
-                            // Register timer service class
-                            registerJobs(targetObject, targetMethod, beanName, cronExpression);
-                        }
+                        if (isCronMethod(method)) registerTimerServiceClass(beanName, targetObject, method);
                     }
                 }
             }
@@ -60,6 +51,20 @@ public class TriggerSchedulerFactoryBean extends SchedulerFactoryBean {
             log.error(e);
         }
     }
+
+	private void registerTimerServiceClass(String beanName, Object targetObject, Method method) throws Exception {
+		String cronExpression = "";
+		String targetMethod = "";
+		Cron triggerMethod = null;
+		targetMethod = method.getName();
+		triggerMethod = (Cron) method.getAnnotation(Cron.class);
+		cronExpression = triggerMethod.cronExpression();
+		registerJobs(targetObject, targetMethod, beanName, cronExpression);
+	}
+
+	private boolean isCronMethod(Method method) {
+		return method.isAnnotationPresent(Cron.class);
+	}
 
     private void registerJobs(Object targetObject, String targetMethod, String beanName, String cronExpression) throws Exception {
         
