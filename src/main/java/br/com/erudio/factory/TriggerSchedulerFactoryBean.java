@@ -36,15 +36,16 @@ public class TriggerSchedulerFactoryBean extends SchedulerFactoryBean {
             String[] beanNames = applicationContext.getBeanNamesForType(Object.class);
             for (String beanName : beanNames) {
                 Class<?> targetClass = applicationContext.getType(beanName);
-                // To determine whether marked with the MyTriggerType annotation cycle
-                if (targetClass.isAnnotationPresent(QuartzJob.class)) {
-                    getCronExpressionInTriggerMethods(beanName, targetClass);
-                }
+                if (isJobClass(targetClass)) getCronExpressionInTriggerMethods(beanName, targetClass);
             }
         } catch (Exception e) {
             log.error(e);
         }
     }
+
+	private boolean isJobClass(Class<?> targetClass) {
+		return targetClass.isAnnotationPresent(QuartzJob.class);
+	}
 
 	private void getCronExpressionInTriggerMethods(String beanName, Class<?> targetClass) throws Exception {
 		Object targetObject = applicationContext.getBean(beanName);
