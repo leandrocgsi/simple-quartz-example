@@ -5,11 +5,11 @@
 
 [Spring and Quartz integration with Java Config](http://stackoverflow.com/questions/31764078/spring-and-quartz-integration-with-java-config)
 
-[GIST](https://github.com/davidkiss/spring-boot-quartz-demo)
+[Spring Boot Quartz Demo](https://github.com/davidkiss/spring-boot-quartz-demo)
 
-https://gist.github.com/jeffsheets/5862630
+[GIST](https://gist.github.com/jeffsheets/5862630)
 
-https://gist.github.com/jelies/5085593
+[GIST](https://gist.github.com/jelies/5085593)
 
 http://techo-ecco.com/blog/quartz-and-spring-integration/
 
