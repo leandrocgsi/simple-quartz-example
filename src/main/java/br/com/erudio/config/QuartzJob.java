@@ -13,5 +13,5 @@ import org.springframework.stereotype.Component;
 @Documented
 @Component
 public @interface QuartzJob {
-	String value() default "";
+    String value() default "";
 }

@@ -38,39 +38,39 @@ public class TriggerSchedulerFactoryBean extends SchedulerFactoryBean {
         }
     }
 
-	private void processBeans() throws Exception {
-		String[] beanNames = applicationContext.getBeanNamesForType(Object.class);
-		for (String beanName : beanNames) {
-		    Class<?> targetClass = applicationContext.getType(beanName);
-		    if (isJobClass(targetClass)) getCronExpressionInTriggerMethods(beanName, targetClass);
-		}
-	}
+    private void processBeans() throws Exception {
+        String[] beanNames = applicationContext.getBeanNamesForType(Object.class);
+        for (String beanName : beanNames) {
+            Class<?> targetClass = applicationContext.getType(beanName);
+            if (isJobClass(targetClass)) getCronExpressionInTriggerMethods(beanName, targetClass);
+        }
+    }
 
-	private boolean isJobClass(Class<?> targetClass) {
-		return targetClass.isAnnotationPresent(QuartzJob.class);
-	}
+    private boolean isJobClass(Class<?> targetClass) {
+        return targetClass.isAnnotationPresent(QuartzJob.class);
+    }
 
-	private void getCronExpressionInTriggerMethods(String beanName, Class<?> targetClass) throws Exception {
-		Object targetObject = applicationContext.getBean(beanName);
-		Method[] methods = targetClass.getDeclaredMethods();
-		for (Method method : methods) {
-		    if (isCronMethod(method)) registerTimerServiceClass(beanName, targetObject, method);
-		}
-	}
+    private void getCronExpressionInTriggerMethods(String beanName, Class<?> targetClass) throws Exception {
+        Object targetObject = applicationContext.getBean(beanName);
+        Method[] methods = targetClass.getDeclaredMethods();
+        for (Method method : methods) {
+            if (isCronMethod(method)) registerTimerServiceClass(beanName, targetObject, method);
+        }
+    }
 
-	private void registerTimerServiceClass(String beanName, Object targetObject, Method method) throws Exception {
-		String cronExpression = "";
-		String targetMethod = "";
-		Cron triggerMethod = null;
-		targetMethod = method.getName();
-		triggerMethod = (Cron) method.getAnnotation(Cron.class);
-		cronExpression = triggerMethod.cronExpression();
-		registerJobs(targetObject, targetMethod, beanName, cronExpression);
-	}
+    private void registerTimerServiceClass(String beanName, Object targetObject, Method method) throws Exception {
+        String cronExpression = "";
+        String targetMethod = "";
+        Cron triggerMethod = null;
+        targetMethod = method.getName();
+        triggerMethod = (Cron) method.getAnnotation(Cron.class);
+        cronExpression = triggerMethod.cronExpression();
+        registerJobs(targetObject, targetMethod, beanName, cronExpression);
+    }
 
-	private boolean isCronMethod(Method method) {
-		return method.isAnnotationPresent(Cron.class);
-	}
+    private boolean isCronMethod(Method method) {
+        return method.isAnnotationPresent(Cron.class);
+    }
 
     private void registerJobs(Object targetObject, String targetMethod, String beanName, String cronExpression) throws Exception {
         
@@ -83,32 +83,32 @@ public class TriggerSchedulerFactoryBean extends SchedulerFactoryBean {
         registerJobsAndTriggersOnFactory(trigger);
     }
 
-	private void registerJobsAndTriggersOnFactory(CronTrigger trigger) throws SchedulerException {
-		List<Trigger> triggerList = new ArrayList<Trigger>();
+    private void registerJobsAndTriggersOnFactory(CronTrigger trigger) throws SchedulerException {
+        List<Trigger> triggerList = new ArrayList<Trigger>();
         triggerList.add(trigger);
         Trigger[] triggers = (Trigger[]) triggerList.toArray(new Trigger[triggerList.size()]);
         setTriggers(triggers);
         super.registerJobsAndTriggers();
-	}
+    }
 
-	private CronTriggerFactoryBean cofigureTimer(String targetMethod, String beanName, String cronExpression, JobDetail jobDetail) {
-		CronTriggerFactoryBean cronTriggerBean = new CronTriggerFactoryBean();
+    private CronTriggerFactoryBean cofigureTimer(String targetMethod, String beanName, String cronExpression, JobDetail jobDetail) {
+        CronTriggerFactoryBean cronTriggerBean = new CronTriggerFactoryBean();
         cronTriggerBean.setJobDetail(jobDetail);
         cronTriggerBean.setCronExpression(cronExpression);
         cronTriggerBean.setName(beanName + "_" + targetMethod + "_Trigger");
         cronTriggerBean.setBeanName(beanName + "_" + targetMethod + "_Trigger");
         cronTriggerBean.afterPropertiesSet();
-		return cronTriggerBean;
-	}
+        return cronTriggerBean;
+    }
 
-	private MethodInvokingJobDetailFactoryBean packagingBusinessClass(Object targetObject, String targetMethod, String beanName) throws ClassNotFoundException, NoSuchMethodException {
-		MethodInvokingJobDetailFactoryBean jobDetailFactoryBean = new MethodInvokingJobDetailFactoryBean();
+    private MethodInvokingJobDetailFactoryBean packagingBusinessClass(Object targetObject, String targetMethod, String beanName) throws ClassNotFoundException, NoSuchMethodException {
+        MethodInvokingJobDetailFactoryBean jobDetailFactoryBean = new MethodInvokingJobDetailFactoryBean();
         jobDetailFactoryBean.setTargetObject(targetObject);
         jobDetailFactoryBean.setTargetMethod(targetMethod);
         jobDetailFactoryBean.setBeanName(beanName + "_" + targetMethod + "_Task");
         jobDetailFactoryBean.setName(beanName + "_" + targetMethod + "_Task");
         jobDetailFactoryBean.setConcurrent(false);
         jobDetailFactoryBean.afterPropertiesSet();
-		return jobDetailFactoryBean;
-	}
+        return jobDetailFactoryBean;
+    }
 }
