@@ -11,8 +11,8 @@
 
 [GIST](https://gist.github.com/jelies/5085593)
 
-http://techo-ecco.com/blog/quartz-and-spring-integration/
+[Quartz and Spring Integration .Dev .Blog](http://techo-ecco.com/blog/quartz-and-spring-integration/)
 
-https://mindcollect.wordpress.com/tag/spring/
+[Multi-Module Maven Spring Boot Quartz - Mind Colect](https://mindcollect.wordpress.com/tag/spring/)
 
 https://github.com/eugenp/tutorials/tree/master/spring-quartz
