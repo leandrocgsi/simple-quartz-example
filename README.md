@@ -1,9 +1,9 @@
-#Simple Quartz Example
+# Simple Quartz Example
 
 [![Build Status](https://travis-ci.org/leandrocgsi/simple-quartz-example.svg?branch=master)](https://travis-ci.org/leandrocgsi/simple-quartz-example)
 [![Build Status](https://circleci.com/gh/leandrocgsi/simple-quartz-example.svg?&style=shield)](https://circleci.com/gh/leandrocgsi/simple-quartz-example/)
 
-#Technologies Involved
+# Technologies Involved
 
 [Quartz](http://www.quartz-scheduler.org/)
 
@@ -16,3 +16,7 @@ This project was build based in folowing posts:
 * [Quartz and Spring Integration .Dev .Blog](http://techo-ecco.com/blog/quartz-and-spring-integration/)
 * [Multi-Module Maven Spring Boot Quartz - Mind Colect](https://mindcollect.wordpress.com/tag/spring/)
 * [Baeldung](https://github.com/eugenp/tutorials/tree/master/spring-quartz)
+
+# Se especialize
+
+[<img src="https://github.com/leandrocgsi/SpringBootPlayground/blob/master/Images/banner_blog_udemy_course_sring_boot.jpg?raw=true">](https://www.udemy.com/restful-apis-do-0-a-nuvem-com-springboot-e-docker/?couponCode=GTHB_REPOS_SALE2019)
